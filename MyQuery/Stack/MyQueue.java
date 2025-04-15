@@ -1,36 +1,52 @@
 package Stack;
 
 import Lists.MyLinkedList;
-import java.util.NoSuchElementException;
 
-public class MyQueue<T> {
-    private MyLinkedList<T> list = new MyLinkedList<>();
+public class MyQueue<T extends Comparable<T>> {
+    private MyLinkedList<T> list;
+
+    public MyQueue() {
+        list = new MyLinkedList<>();
+    }
 
     public void enqueue(T element) {
-        list.add(element);
+        list.addLast(element);
     }
 
     public T dequeue() {
         if (isEmpty()) {
-            throw new NoSuchElementException();
+            System.out.println("Queue is empty");
+            return null;
         }
-        T element = list.get(0);
         list.remove(0);
-        return element;
+        return list.getFirst();
     }
 
-    public T peek() {
+    public void front() {
         if (isEmpty()) {
-            throw new NoSuchElementException();
+            System.out.println("Queue is empty");
+            return;
         }
-        return list.get(0);
+        System.out.println(list.getFirst());
     }
 
     public boolean isEmpty() {
-        return list.isEmpty();
+        return list.size() == 0;
     }
 
     public int size() {
         return list.size();
+    }
+
+    public void show() {
+        if (isEmpty()) {
+            System.out.println("Queue is empty");
+            return;
+        }
+        System.out.print("[");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.print(" " + list.get(i));
+        }
+        System.out.println(" ]");
     }
 }

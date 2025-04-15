@@ -1,78 +1,93 @@
 package Stack;
 
 import Lists.MyArrayList;
-import java.util.NoSuchElementException;
 
 public class MyMinHeap<T extends Comparable<T>> {
-    private MyArrayList<T> list = new MyArrayList<>();
+    private MyArrayList<T> list;
 
-    public void insert(T element) {
-        list.add(element);
-        siftUp(list.size() - 1);
+    public MyMinHeap() {
+        list = new MyArrayList<>();
+    }
+
+    public void insert(T item) {
+        list.add(item);
+        heapifyUp(list.size() - 1);
     }
 
     public T extractMin() {
-        if (isEmpty()) {
-            throw new NoSuchElementException();
-        }
+        if (isEmpty())
+            return null;
+
         T min = list.get(0);
-        T lastElement = list.removeAndReturn(list.size() - 1); 
+        T last = list.get(list.size() - 1);
+        list.set(0, last);
+        list.remove(list.size() - 1);
+        heapifyDown(0);
 
-        if (!isEmpty()) {
-            list.set(0, lastElement);
-            siftDown(0); 
-        }
-
-        return min; 
+        return min;
     }
 
-    private void siftUp(int index) {
-        while (index > 0) {
-            int parentIndex = (index - 1) / 2;
+    public T peek() {
+        return isEmpty() ? null : list.get(0);
+    }
 
-            if (list.get(index).compareTo(list.get(parentIndex)) < 0) {
-                swap(index, parentIndex);
-                index = parentIndex; 
+    public boolean isEmpty() {
+        return list.size() == 0;
+    }
+
+    public int size() {
+        return list.size();
+    }
+
+    public void show() {
+        if (isEmpty()) {
+            System.out.println("Heap is empty");
+            return;
+        }
+        System.out.print("[");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.print(" " + list.get(i));
+        }
+        System.out.println(" ]");
+    }
+
+    private void heapifyUp(int index) {
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            T current = list.get(index);
+            T parentValue = list.get(parent);
+            if (current.compareTo(parentValue) < 0) {
+                list.set(index, parentValue);
+                list.set(parent, current);
+                index = parent;
             } else {
                 break;
             }
         }
     }
 
-    private void siftDown(int index) {
+    private void heapifyDown(int index) {
         int size = list.size();
         while (true) {
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
             int smallest = index;
-            int leftChild = 2 * index + 1;
-            int rightChild = 2 * index + 2;
 
-            if (leftChild < size && list.get(leftChild).compareTo(list.get(smallest)) < 0) {
-                smallest = leftChild;
+            if (left < size && list.get(left).compareTo(list.get(smallest)) < 0) {
+                smallest = left;
             }
-            if (rightChild < size && list.get(rightChild).compareTo(list.get(smallest)) < 0) {
-                smallest = rightChild;
+            if (right < size && list.get(right).compareTo(list.get(smallest)) < 0) {
+                smallest = right;
             }
 
             if (smallest != index) {
-                swap(index, smallest);
+                T temp = list.get(index);
+                list.set(index, list.get(smallest));
+                list.set(smallest, temp);
                 index = smallest;
             } else {
                 break;
             }
         }
-    }
-
-    private void swap(int i, int j) {
-        T temp = list.get(i);
-        list.set(i, list.get(j));
-        list.set(j, temp);
-    }
-
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    public int size() {
-        return list.size();
     }
 }
